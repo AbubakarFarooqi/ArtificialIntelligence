@@ -7,7 +7,7 @@ class Problem:
     @staticmethod
     def TransiotionModel(state,action,x,y):
         newState = [[element for element in row] for row in state]
-        if(action == "left"):
+        (if(action == "left"):
             temp =  newState[x][y-1]
             newState[x][y-1] = " "
             newState[x][y] = temp
@@ -22,7 +22,7 @@ class Problem:
         elif (action == "down"):
             temp =  newState[x+1][y]
             newState[x+1][y] = " "
-            newState[x][y] = temp
+            newState[x][y] = temp)
         return newState
     @staticmethod
     def GoalTest(node):

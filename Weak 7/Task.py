@@ -124,11 +124,6 @@ def string_permutations(arr , start):
         if perm[0] == first_element:
             valid_permutation = ''.join(perm) + first_element
             valid_permutations.append(valid_permutation)
-            # if(graph.is_valid(valid_permutation)):
-            #     valid_permutations.append([valid_permutation,graph.pathCost(valid_permutation)])
-            # else:
-            #     valid_permutations.append([valid_permutation,5000])
-
     return valid_permutations
 
 
@@ -154,9 +149,10 @@ def Mutation(offSpring):
 def TSP_Genetic_Algorithm(graph,population):
     noOfGenerationsWithNoSignificantChanges = 1000
     i = 1
+    j=1
     lower_bound = 0
     upper_bound = len(population)-1
-    minimumCost = min(population, key=lambda x: x[1])
+    minimumCost = min(population, key=lambda x: x[1])[1]
     while i <= (noOfGenerationsWithNoSignificantChanges):
         parent1 = population[random.randint(lower_bound, upper_bound)]
         parent2 = population[random.randint(lower_bound, upper_bound)]
@@ -168,11 +164,14 @@ def TSP_Genetic_Algorithm(graph,population):
         else:
             population.append([offSpring,10000])
         upper_bound= upper_bound+1
-        newMinimumCost = min(population, key=lambda x: x[1])
+        newMinimumCost = min(population, key=lambda x: x[1])[1]
+        j=j+1
         if(newMinimumCost >= minimumCost):
             print(i)
             i = i+1
-        minimumCost = newMinimumCost
+        else:
+            minimumCost = newMinimumCost
+    print(j)
     return sorted(population, key=lambda x: x[1])
 
 def getPopulation(vertices):
@@ -181,12 +180,16 @@ def getPopulation(vertices):
     population2 = string_permutations(vertices , '1')
     population3 = string_permutations(vertices , '2')
     population4 = string_permutations(vertices , '3')
+    population5 = string_permutations(vertices , '4')
+    population6 = string_permutations(vertices , '5')
     temp = []
     for i in range(5):
         temp.append(population1[i])
         temp.append(population2[i])
         temp.append(population3[i])
         temp.append(population4[i])
+        temp.append(population5[i])
+        temp.append(population6[i])
 # selected_elements = population1[:5] + population2[:5] + population3[:5] + population4[:5]
     population = []
     for i in range(len(temp)):
@@ -265,11 +268,13 @@ graph.add_edge(5,4,22)
 vertices = ['0','1','2','3','4','5']
 
 
-solution =  TSP_Genetic_Algorithm(graph , getPopulation(vertices))[0]
+solution =  TSP_Genetic_Algorithm(graph , getPopulation(vertices))
+# solution =  TSP_Genetic_Algorithm(graph , getPopulation(vertices))[0]
 
-for i in range(len( solution[0])):
-    print(solution[0][i]+" -> ",end = "")
-print()
-print()
-print("Optimal Cost = ",solution[1])
+print(solution)
+# for i in range(len( solution[0])):
+#     print(solution[0][i]+" -> ",end = "")
+# print()
+# print()
+# print("Optimal Cost = ",solution[1])
 
