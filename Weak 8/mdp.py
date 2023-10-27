@@ -51,8 +51,8 @@ actions = ['left','right','up','down']
 
 
 class Cell:
-    def __init__(self,reward,action):
-        self.reward = reward
+    def __init__(self,value,action):
+        self.value = value
         self.action = action
 
 
@@ -76,81 +76,82 @@ def summation(V,action,j,k):
     sum = 0
     p = 0.8
     oneMinusP = (1-p)/3
-    df = 0.51 #discount factor gamma
+    # df = 0.51 #discount factor gamma
+    df = 0.9 #discount factor gamma
     reward = -0.01
     if(action == "left"):
         
-        sum = sum + p*(reward + df*V[j][k-1].reward)
+        sum = sum + p*(reward + df*V[j][k-1].value)
 
         if(isValidAction("right",j,k)):
 
-            sum = sum + oneMinusP*(reward + df*V[j][k+1].reward)
+            sum = sum + oneMinusP*(reward + df*V[j][k+1].value)
         else: # if not valid move then ending up in same state
-            sum = sum + oneMinusP*(reward + df*V[j][k].reward)
+            sum = sum + oneMinusP*(reward + df*V[j][k].value)
 
 
         if(isValidAction("up",j,k)):
-            sum = sum + oneMinusP*(reward + df*V[j-1][k].reward)
+            sum = sum + oneMinusP*(reward + df*V[j-1][k].value)
         else:
-            sum = sum + oneMinusP*(reward + df*V[j][k].reward)
+            sum = sum + oneMinusP*(reward + df*V[j][k].value)
 
 
         if(isValidAction("down",j,k)):
-            sum = sum + oneMinusP*(reward + df*V[j+1][k].reward)
+            sum = sum + oneMinusP*(reward + df*V[j+1][k].value)
         else:
-            sum = sum + oneMinusP*(reward + df*V[j][k].reward)
+            sum = sum + oneMinusP*(reward + df*V[j][k].value)
 
 
     elif (action == "right"):
-        sum = sum + p*(reward + df*V[j][k+1].reward)
+        sum = sum + p*(reward + df*V[j][k+1].value)
 
         if(isValidAction("left",j,k)):
-            sum = sum + oneMinusP*(reward + df*V[j][k-1].reward)
+            sum = sum + oneMinusP*(reward + df*V[j][k-1].value)
         else: # if not valid move then ending up in same state
-            sum = sum + oneMinusP*(reward + df*V[j][k].reward)
+            sum = sum + oneMinusP*(reward + df*V[j][k].value)
 
         if(isValidAction("up",j,k)):
-            sum = sum + oneMinusP*(reward + df*V[j-1][k].reward)
+            sum = sum + oneMinusP*(reward + df*V[j-1][k].value)
         else:
-            sum = sum + oneMinusP*(reward + df*V[j][k].reward)
+            sum = sum + oneMinusP*(reward + df*V[j][k].value)
 
 
         if(isValidAction("down",j,k)):
-            sum = sum + oneMinusP*(reward + df*V[j+1][k].reward)
+            sum = sum + oneMinusP*(reward + df*V[j+1][k].value)
         else:
-            sum = sum + oneMinusP*(reward + df*V[j][k].reward)
+            sum = sum + oneMinusP*(reward + df*V[j][k].value)
 
     elif (action == "up"):
 
-        sum = sum + p*(reward + df*V[j-1][k].reward)
+        sum = sum + p*(reward + df*V[j-1][k].value)
 
         if(isValidAction("left",j,k)):
-            sum = sum + oneMinusP*(reward + df*V[j][k-1].reward)
+            sum = sum + oneMinusP*(reward + df*V[j][k-1].value)
         else:
-            sum = sum + oneMinusP*(reward + df*V[j][k].reward)
+            sum = sum + oneMinusP*(reward + df*V[j][k].value)
         if(isValidAction("right",j,k)):
-            sum = sum + oneMinusP*(reward + df*V[j][k+1].reward)
+            sum = sum + oneMinusP*(reward + df*V[j][k+1].value)
         else:
-            sum = sum + oneMinusP*(reward + df*V[j][k].reward)
+            sum = sum + oneMinusP*(reward + df*V[j][k].value)
         if(isValidAction("down",j,k)):
-            sum = sum + oneMinusP*(reward + df*V[j+1][k].reward)
+            sum = sum + oneMinusP*(reward + df*V[j+1][k].value)
         else:
-            sum = sum + oneMinusP*(reward + df*V[j][k].reward)
+            sum = sum + oneMinusP*(reward + df*V[j][k].value)
     elif (action == "down"):
-        sum = sum + p*(reward + df*V[j+1][k].reward)
+        sum = sum + p*(reward + df*V[j+1][k].value)
 
         if(isValidAction("left",j,k)):
-            sum = sum + oneMinusP*(reward + df*V[j][k-1].reward)
+            sum = sum + oneMinusP*(reward + df*V[j][k-1].value)
         else:
-            sum = sum + oneMinusP*(reward + df*V[j][k].reward)
+            sum = sum + oneMinusP*(reward + df*V[j][k].value)
         if(isValidAction("right",j,k)):
-            sum = sum + oneMinusP*(reward + df*V[j][k+1].reward)
+            sum = sum + oneMinusP*(reward + df*V[j][k+1].value)
         else:
-            sum = sum + oneMinusP*(reward + df*V[j][k].reward)
+            sum = sum + oneMinusP*(reward + df*V[j][k].value)
         if(isValidAction("up",j,k)):
-            sum = sum + oneMinusP*(reward + df*V[j-1][k].reward)  
+            sum = sum + oneMinusP*(reward + df*V[j-1][k].value)  
         else:
-            sum = sum + oneMinusP*(reward + df*V[j][k].reward)
+            sum = sum + oneMinusP*(reward + df*V[j][k].value)
     return sum
 
 
@@ -164,6 +165,12 @@ def value_Iteration():
     V_opt[hx3][hy3] = Cell(-1,None)
     V_opt[hx4][hy4] = Cell(-1,None)
     for i in range(1,1000):
+    #     for i in range(4):
+    #         for j in range(4):
+    #             print(f'{V_opt[i][j].action:8}', end="")
+    #         print()
+    #     print()
+    #     print()
         V = [[Cell(0,None) for i in range(cols)] for j in range(rows)]
         for j in range (rows):
             for k in range(cols):
@@ -179,29 +186,11 @@ def value_Iteration():
                     elif (isValidAction(a,j,k)):
                         sum = summation(V_opt,a,j,k)
                         bellmanSums.append([a,sum])
-                        # sum = sum + 0.1*(-0.1 + V_opt[j][k].reward)
-                        # sum = sum + 0.3*(-0.1 + V_opt[j][k].reward)
-                        # sum = sum + 0.3*(-0.1 + V_opt[j][k].reward)
-                        # sum = sum + 0.3*(-0.1 + V_opt[j][k].reward)
                 max = sorted(bellmanSums, key=lambda x: x[1], reverse=True) #max element
                 # max = sorted(bellmanSums, key=lambda x: x[1]) #max element
                 V[j][k] = Cell(max[0][1],max[0][0])
         V_opt = V
-        # flag = True
-        # for i in range(4):
-        #     for j in range(4):
-        #         if((abs(V_opt[i][j].reward - V[i][j].reward) < 0.01)):
-        #             flag = False
-        # if(flag):
-        #     break
 
-
-        # for i in range(4):
-        #     for j in range(4):
-        #         print(f'{V_opt[i][j].action:8}', end="")
-        #     print()
-        # print()
-        # print()
 
 
 
