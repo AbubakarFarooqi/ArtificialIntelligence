@@ -5,76 +5,6 @@ import copy
 # 0 = Empty Cell
 
 
-
-# def generate_tic_tac_toe_states():
-#     # Initialize an empty list to store the game states
-#     states = []
-
-#     # Helper function to check if a player has won
-#     def is_winner(board, player):
-#         # Check rows, columns, and diagonals
-#         for i in range(3):
-#             if all(board[i][j] == player for j in range(3)) or \
-#                all(board[j][i] == player for j in range(3)):
-#                 return True
-#         if all(board[i][i] == player for i in range(3)) or \
-#            all(board[i][2 - i] == player for i in range(3)):
-#             return True
-#         return False
-
-#     # Helper function to check if the board is full
-#     def is_full(board):
-#         return all(board[i][j] != 0 for i in range(3) for j in range(3))
-
-#     # Helper function to generate possible moves
-#     def generate_moves(board, player):
-#         moves = []
-#         for i in range(3):
-#             for j in range(3):
-#                 if board[i][j] == 0:
-#                     new_board = [row.copy() for row in board]
-#                     new_board[i][j] = player
-#                     moves.append(new_board)
-#         return moves
-
-#     # Recursive function to generate states
-#     def generate_states(board, current_player):
-#         if is_winner(board, 1) or is_winner(board, 2) or is_full(board):
-#             states.append(board)
-#             return
-#         next_player = 3 - current_player
-#         moves = generate_moves(board, current_player)
-#         for move in moves:
-#             generate_states(move, next_player)
-
-#     # Start with an empty board and the first player (1)
-#     initial_board = [[0, 0, 0] for _ in range(3)]
-#     generate_states(initial_board, 1)
-
-#     return states
-
-
-
-
-
-# def print_tic_tac_toe_states(states):
-#     for state in states:
-#         for row in state:
-#             print(" | ".join(map(str, row)))
-#             print("-" * 9)
-#         print("\n" + "=" * 18 + "\n")
-
-# # Example usage:
-# tic_tac_toe_states = generate_tic_tac_toe_states()
-# print_tic_tac_toe_states(tic_tac_toe_states)
-
-
-
-
-
-
-
-
 #defining 2D array
 rows,cols = (3,3)
 arr = [['x' for i in range(cols)] for j in range(rows)]
@@ -96,8 +26,28 @@ class Node:
         self.Reward = r
 
 
-# class Probablities:
-#     # def SetProbablity(self)
+class Probability:
+    def __init__(self, s, s_prime, a):
+        self.s = s
+        self.a = a
+        self.s_prime = s_prime
+
+    def _convert_to_immutable(self, obj):
+        if isinstance(obj, list):
+            return tuple(self._convert_to_immutable(item) for item in obj)
+        return obj
+
+    def __hash__(self):
+        # Recursively convert lists to tuples before hashing
+        return hash((self.s, self._convert_to_immutable(self.s_prime), self.a))
+
+    def __eq__(self, other):
+        if isinstance(other, Probability):
+            # Use _convert_to_immutable(self.s_prime) for comparison as well
+            return (self.s, self._convert_to_immutable(self.s_prime), self.a) == \
+                   (other.s, self._convert_to_immutable(other.s_prime), other.a)
+        return False
+
 class EpisodeInstance:
     def __init__(self,s,a,r,s_prime):
         self.s = s
@@ -204,7 +154,7 @@ Visited_States.add(tuple(map(tuple, currState)))
 player = 1
 i = 1
 Episode = []
-while (i <= 1000):
+while (i <= 10):
     r,c = TicTacToe.SelectCoordinatesForPlayer(currState)
     newState[r][c] = player
     if(TicTacToe.IsWin(newState,player)):
@@ -259,17 +209,34 @@ NoOfTime_S_A_Occurs = []
 states = [list(inner_tuple) for inner_tuple in Visited_States]
 # s =  Episodes[77][6].s
 i = 1
+statesDict = {}
 for s in states:
+    s_primes = []
     count = 0
     for episode in Episodes:
         for instance in episode:
         # print(instance.s)
             if(TicTacToe.are_states_equal(s,instance.s) and instance.a == 1):
+                s_primes.append(instance.s_prime)
                 count = count+1
     NoOfTime_S_A_Occurs.append([s,count])
+    statesDict[tuple(map(tuple, s))] = s_primes
     print(str(i))
     i = i+1
+ProbablityDict = {}
 print("This state action pair occurs = " + str(count))
+for s,s_primes in statesDict.items():
+    for sp in s_primes:
+        tpl = tuple(map(tuple, sp))
+        count = sum(1 for arr in s_primes if tuple(map(tuple, arr)) == tpl)
+        p = Probability(s,sp,2)
+        for item in NoOfTime_S_A_Occurs:
+            if TicTacToe.are_states_equal( item[0], s) :
+                ProbablityDict[p] = count /  item[1]
+       
+x = 6
+        
+
 
 # start.CreateNode()
 
