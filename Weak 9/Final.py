@@ -260,7 +260,7 @@ for i in range(1000): # no of episodes
 with open('ListOf_SAS_prime_reward.pkl', 'wb') as file:
     pickle.dump(ListOf_SAS_prime_reward, file)
 
-# This code creates a dictionary transition_probabilities where
+# This fucntion creates a dictionary transition_probabilities where
 # the keys are tuples (s, a) and the values are dictionaries containing the
 # next states s' and their corresponding probabilities. 
 # The probabilities are normalized counts of each transition.
@@ -272,9 +272,9 @@ transition_probabilities = {}
 
 # Iterate through the list of (s, a, s', r) tuples
 for transition in ListOf_SAS_prime_reward:
-    s, a, s_prime, _ = transition
+    s, a, s_prime,r = transition
 
-    # Convert lists to tuples for hashability
+    # Convert lists to tuples for hashability as dictionary keys are only immutable and list are mutable 
     s_tuple = tuple(map(tuple, s))
     s_prime_tuple = tuple(map(tuple, s_prime))
 
@@ -287,26 +287,27 @@ for transition in ListOf_SAS_prime_reward:
 
     # If the next state is not in the sub-dictionary, add it
     if s_prime_tuple not in transition_probabilities[key]:
-        transition_probabilities[key][s_prime_tuple] = 0
+        transition_probabilities[key][s_prime_tuple] = 0 
 
     # Increment the count for the transition (s, a, s')
-    transition_probabilities[key][s_prime_tuple] += 1
+    transition_probabilities[key][s_prime_tuple] += 1 # {(s,a):{s' : count}}
 
 # Now, transition_probabilities contains the counts of each transition
-# normalizing the counts to get probabilities
+# Finding  probabilities
 for key, value in transition_probabilities.items():
-    total_count = sum(value.values())
-    probabilities = {s_prime: count / total_count for s_prime, count in value.items()}
+    total_count = sum(value.values()) # summing how many time (s,a) occurs
+    probabilities = {s_prime: count / total_count for s_prime, count in value.items()} # this will iterate for all s,a,s' and set {(s,a):{s':probablity}}
     transition_probabilities[key] = probabilities
 
 # Now, transition_probabilities contains the transition probabilities T(s, a, s')
 
 
 # Convert the ListOf_SAS_prime_reward to a dictionary for easy access
-rewards = {(tuple(map(tuple, s)), a): r for s, a, _, r in ListOf_SAS_prime_reward}
+rewards = {(tuple(map(tuple, s)), a): r for s, a, s_p, r in ListOf_SAS_prime_reward}
 
 # Value iteration function
-def value_iteration(transition_probabilities, rewards, gamma=0.9, epsilon=1e-6):
+def value_iteration(transition_probabilities, rewards):
+    gamma=0.9
     i = 0
     states = set()
     actions = set()
@@ -317,7 +318,6 @@ def value_iteration(transition_probabilities, rewards, gamma=0.9, epsilon=1e-6):
     V = {s: 0 for s in states}
     optimal_actions = {s: None for s in states}
     while True:
-        delta = 0
         for (s, a), s_primes in transition_probabilities.items():
             old_v = V[s]
             q_values = {s_prime: [rewards.get((s, a, s_prime), 0) + gamma * V[s_prime], a] for s_prime in s_primes}
