@@ -2,7 +2,7 @@
 # 2 = Agent
 import random
 import copy
-import numpy as np
+# import numpy as np
 import pickle
 
 def is_game_over(board):
@@ -204,12 +204,12 @@ ListOf_SA = []
 
 
 # Load ListOf_SAS_prime_reward from the file
-with open('ListOf_SAS_prime_reward.pkl', 'rb') as file:
-    ListOf_SAS_prime_reward = pickle.load(file)
+# with open('ListOf_SAS_prime_reward.pkl', 'rb') as file:
+#     ListOf_SAS_prime_reward = pickle.load(file)
 
 
 
-for i in range(1000): # no of episodes
+for i in range(10): # no of episodes
     state = copy.deepcopy(arr)
     player = 1
     # print(i)

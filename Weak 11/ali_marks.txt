@@ -1,0 +1,4 @@
+Math: 90 out of 100
+Physics: 85 out of 100
+Chemistry: 92 out of 100
+Biology: 88 out of 100
